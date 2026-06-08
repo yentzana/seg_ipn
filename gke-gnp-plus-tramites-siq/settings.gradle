@@ -1,4 +1,0 @@
-rootProject.name = 'GKE-GNP-PLUS-TRAMITES-SIQ'
-gradle.rootProject {
-    it.group = 'mx.seg.ipn.aplicacion'
-}

@@ -1,6 +1,0 @@
-gnp:
-  tramites:
-    siq:
-      url: ${SN_URL}
-      username: ${SN_USER}
-      password: ${SN_PASSWORD}
