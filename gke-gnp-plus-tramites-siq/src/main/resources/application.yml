@@ -1,0 +1,126 @@
+application:
+  title: GKE/GAE/MSV - Plantilla para microservicios
+  description: |
+    ### Plantilla base para microservicios Java con "Arquitectura Hexagonal" y "OpenApi" requerida y que deben seguir los equipos de desarrollo.  
+    - **Tecnología:** Google Cloud Kubernetes Engine 
+    - **Apigee:** N/a
+    - **Aplicaciones/Clientes que usan el API:**
+  version: 1.0.0
+
+server:
+  port: 8092
+  servlet:
+    context-path: /tramites-siq
+
+   
+spring:
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 25MB
+      max-request-size: 25MB
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    name: seguridad
+    url: jdbc:mysql://localhost:3307/seguridad?serverTimezone=UTC&useSSL=false&tlsVersions=TLSv1.2
+#?useSSL=false&zeroDateTimeBehavior=convertToNull
+    username: root
+    password: root
+    #username: ${DB_USERNAME}
+    #password: ${DB_PASSWORD}
+    testWhileIdle: true
+    validationQuery: SELECT 1
+    timeBetweenEvictionRunsMillis: 60000
+    hikari:
+      maximum-pool-size: 5
+      minimum-idle: 5
+      connection-timeout: 10000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+  jpa:
+    show-sql: false
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5Dialect
+  main:
+    allow-bean-definition-overriding: true
+  application:
+    name: Modulo de seguridad
+  profiles:
+    active: dev
+
+management:
+  endpoints:
+    web:
+      base-path: /management
+      exposure:
+        include: "*"
+  endpoint:
+    env:
+      enabled: ${ACTUATOR_ENABLED:false}
+      post:
+        enabled: false
+    health:
+      show-details: always
+      enabled: true
+    info:
+      enabled: true
+    mappings:
+      enabled: ${ACTUATOR_ENABLED:false}
+    restart:
+      enabled: ${ACTUATOR_ENABLED:false}
+    shutdown:
+      enabled: ${ACTUATOR_ENABLED:false}
+
+springdoc:
+  api-docs:
+    path: /api-docs
+    enabled: ${API_DOC_ENABLED:true}
+  swagger-ui:
+    path: /api-docs.html
+    enabled: ${API_DOC_ENABLED:true}
+    filter: true
+  paths-to-exclude: /error
+  override-with-generic-response: false
+
+logging:
+  level:
+    root: ERROR
+    mx.seg.ipn.aplicacion: ${LOG_LEVEL:INFO}
+    mx.ipn.aplication: ${LOG_LEVEL:INFO}
+  pattern:
+    level: "[%X{logTraceToken}] %5p"
+
+ipn:
+  messages:
+    language: es
+  security:
+    auditing:
+      default: ${application.name:${spring.application.name:SYSTEM}}
+    requests:
+      ignoring:
+        - path: "/management/**"
+        - path: "/api-docs*/**"
+        - path: "/webjars/**"
+        - path: "/api-docs/**"
+        - path: "/swagger-ui*/**"
+      #authorize:
+        - path: "/folio/{id}*/**"
+          method: GET
+          access: isAuthenticated()
+        - path: "/poliza/{poliza}*/**"
+          method: GET
+          access: isAuthenticated()
+        - path: "/siniestro/{siniestro}*/**"
+          method: GET
+          access: isAuthenticated()
+        - path: "/persona/**"
+          method: POST
+          access: isAuthenticated()
+        - path: "/notas/{identificadorSiq}*/**"
+          method: GET
+          access: isAuthenticated()
+      #default-access: denyAll
+
